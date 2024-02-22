@@ -6,7 +6,7 @@ import { collection, getDocs } from 'firebase/firestore';
 const LoginPage = ({ navigation }) => {
     const [userID, setUserID] = useState('');
     const [password, setPassword] = useState('');
-    const [modalVisible, setModalVisible] = useState(false); // State for modal visibility
+    const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState('')
 
     const handleLogin = () => {
@@ -16,12 +16,15 @@ const LoginPage = ({ navigation }) => {
     const bookRoom = () => {
         navigation.replace('BookRoom')
     }
+    const addEvents = () => {
+        navigation.replace('Events')
+    }
 
     const RetrieveData = async () => {
         if (!userID || !password) {
             setModalMessage('Empty fields required!')
-            setModalVisible(true); // Show modal if userID or password is empty
-            return; // Exit function if either userID or password is empty
+            setModalVisible(true);
+            return;
         }
     
         try {
@@ -35,7 +38,13 @@ const LoginPage = ({ navigation }) => {
                     setModalMessage("Successfully Login!")
                     setModalVisible(true)
                     setTimeout(() => {
-                        bookRoom()
+                        if(userData.Type === "Instructor") {
+                            bookRoom()
+                        } else if(userData.Type === "Student") {
+                            addEvents()
+                        } else {
+                            console.log("Lab Supervisor login")
+                        }
                     },2000)
                 }
             });
@@ -117,7 +126,7 @@ const styles = StyleSheet.create({
     },
     button: {
         width: '20%',
-        backgroundColor: 'blue',
+        backgroundColor: 'black',
         padding: 10,
         borderRadius: 5,
         marginTop: 8,

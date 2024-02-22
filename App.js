@@ -6,6 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import LoginPage from './components/LoginPage';
 import Signup from './components/Singup';
 import ScheduleRoom from './components/ScheduleRoom';
+import CalendarEvent from './components/CalendarEvent';
 
 const Stack = createStackNavigator();
 
@@ -16,6 +17,7 @@ export default function App() {
         <Stack.Screen name="Login" component={LoginPage} options={{headerShown: false}} />
         <Stack.Screen name="Signup" component={Signup} options={{headerShown: false}} />
         <Stack.Screen name="BookRoom" component={ScheduleRoom} options={{headerShown: false}} />
+        <Stack.Screen name="Events" component={CalendarEvent} options={{headerShown: false}} />
       </Stack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>
