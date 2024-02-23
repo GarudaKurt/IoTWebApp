@@ -1,16 +1,21 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Modal, TextInput, ScrollView } from 'react-native-web'; // Import ScrollView
+import { StyleSheet, Text, View, Modal, TextInput, ScrollView } from 'react-native'; // Updated import
 import { Card, Title, Paragraph, Button } from 'react-native-paper';
 import { db } from './firebaseConfig';
-import { collection, addDoc, getDocs, updateDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
 
 const CalendarEvent = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
+
   const [eventDescription, setEventDescription] = useState('');
   const [eventTitle, setEventTitle] = useState('');
   const [events, setEvents] = useState([]);
-
-  const [userID, setUserID] = useState('')
+  const [userID, setUserID] = useState('');
+  const [removeModalVisible, setRemoveModalVisible] = useState(false);
+  const [eventIndexToRemove, setEventIndexToRemove] = useState(null);
+  const [removeUserID, setRemoveUserID] = useState('');
 
   const handleAddButtonClick = () => {
     setIsModalVisible(true);
@@ -32,30 +37,41 @@ const CalendarEvent = () => {
   };
 
   const handleDeleteEvent = (index) => {
-    const updatedEvents = [...events];
-    updatedEvents.splice(index, 1);
-    setEvents(updatedEvents);
+    setEventIndexToRemove(index);
+    setRemoveModalVisible(true);
   };
 
-  const saveUpdate = () => {
-    handleModalSubmit()
-    updateDb()
-  }
-  /*This function will create new set of fields event title and event description to the firestore db */
+  const handleRemoveModalClose = () => {
+    setRemoveModalVisible(false);
+    setUserID('');
+  };
+
+  const handleRemoveEventSubmit = () => {
+    if (removeUserID === userID) {
+      const updatedEvents = [...events];
+      updatedEvents.splice(eventIndexToRemove, 1);
+      setEvents(updatedEvents);
+      handleRemoveModalClose();
+    } else {
+      setModalMessage("Access dinied only instructor can remove.");
+      setModalVisible(true);
+    }
+  };
+
   const updateDb = async () => {
     try {
       const userRef = doc(db, "users", userID);
       const userSnapshot = await getDocs(collection(db, "users"));
       let userExists = false;
 
-      if(!eventTitle || !eventDescription) {
+      if (!eventTitle || !eventDescription) {
         console.log("Error fields required")
         return;
       }
 
       userSnapshot.forEach((doc) => {
         const userData = doc.data();
-        if (parseInt(userData.userID) === parseInt(userID)) {
+        if (parseInt(userData.userID) === parseInt(userID) && userData.Type === "Instructor") {
           userExists = true;
           console.log("User found:", userData);
           updateDoc(doc.ref, {
@@ -63,25 +79,27 @@ const CalendarEvent = () => {
             Description: eventDescription,
           });
           console.log("Document updated for userID:", userID);
-          console.log("Results:",userData)
-          setModalMessage("Succesfully created!")
-          setModalVisible(true); // Show success modal
+          console.log("Results:", userData);
+          handleModalSubmit();
         }
       });
 
       if (!userExists) {
-        console.log("user ID not exist")
+        setModalMessage("Access denied only instructor could only add event");
+        setModalVisible(true);
+        console.log("user ID not exist");
+        setModalVisible(true);
         return;
       }
     } catch (error) {
       console.log("Error updating document: ", error);
     }
-  }
+  };
 
   return (
     <View style={styles.formContainer}>
       <Text style={styles.title}> Calendar Event</Text>
-      
+
       <Button onPress={handleAddButtonClick}>Add Event</Button>
 
       <ScrollView contentContainerStyle={styles.scrollContainer} horizontal={true}>
@@ -99,13 +117,13 @@ const CalendarEvent = () => {
       </ScrollView>
 
       <Modal
-        visible={isModalVisible}
+        visible={isModalVisible} // Update to isModalVisible
         animationType="slide"
         transparent={true}
         onRequestClose={handleModalClose}
       >
         <View style={styles.modalContainer}>
-        <TextInput
+          <TextInput
             style={styles.textInput}
             placeholder="Enter your instructor id"
             value={userID}
@@ -123,8 +141,39 @@ const CalendarEvent = () => {
             value={eventDescription}
             onChangeText={setEventDescription}
           />
-          <Button onPress={saveUpdate}>Submit</Button>
+          <Button onPress={updateDb}>Submit</Button>
           <Button onPress={handleModalClose}>Cancel</Button>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={removeModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={handleRemoveModalClose}
+      >
+        <View style={styles.modalContainer}>
+          <TextInput
+            style={styles.textInput}
+            placeholder="Enter your instructor id"
+            value={removeUserID}
+            onChangeText={setRemoveUserID}
+          />
+          <Button onPress={handleRemoveEventSubmit}>Submit</Button>
+          <Button onPress={handleRemoveModalClose}>Cancel</Button>
+        </View>
+      </Modal>
+
+      {/* Modal for displaying messages */}
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)} // Close modal when pressing the back button
+      >
+        <View style={styles.modalContainer}>
+          <Text>{modalMessage}</Text>
+          <Button onPress={() => setModalVisible(false)}>OK</Button>
         </View>
       </Modal>
     </View>
