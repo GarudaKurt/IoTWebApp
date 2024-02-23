@@ -13,13 +13,13 @@ const LoginPage = ({ navigation }) => {
         navigation.replace('Signup');
     };
 
-    const bookRoom = () => {
-        navigation.replace('BookRoom')
-    }
-    const addEvents = () => {
-        navigation.replace('Events')
+    const dashBoard = () => {
+        navigation.replace('Dashboards')
     }
 
+    const eventBoard = () => {
+        navigation.replace('Board')
+    }
     const RetrieveData = async () => {
         if (!userID || !password) {
             setModalMessage('Empty fields required!')
@@ -39,11 +39,13 @@ const LoginPage = ({ navigation }) => {
                     setModalVisible(true)
                     setTimeout(() => {
                         if(userData.Type === "Instructor") {
-                            bookRoom()
+                           // bookRoom()
+                           dashBoard()
                         } else if(userData.Type === "Student") {
-                            addEvents()
+                            //addEvents()
+                            eventBoard()
                         } else {
-                            console.log("Lab Supervisor login")
+                            eventBoard()
                         }
                     },2000)
                 }

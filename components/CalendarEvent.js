@@ -4,7 +4,8 @@ import { Card, Title, Paragraph, Button } from 'react-native-paper';
 import { db } from './firebaseConfig';
 import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
 
-const CalendarEvent = () => {
+const CalendarEvent = ({navigation}) => {
+  
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -14,7 +15,7 @@ const CalendarEvent = () => {
   const [events, setEvents] = useState([]);
   const [userID, setUserID] = useState('');
   const [removeModalVisible, setRemoveModalVisible] = useState(false);
-  const [eventIndexToRemove, setEventIndexToRemove] = useState(null);
+  const [eventIndexToRemove, setEventIndexToRemove] = useState(null); 
   const [removeUserID, setRemoveUserID] = useState('');
 
   const handleAddButtonClick = () => {

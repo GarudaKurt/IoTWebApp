@@ -3,7 +3,9 @@ import { StyleSheet, Text, View, SafeAreaView, Pressable, TextInput, Modal, Butt
 import { db } from './firebaseConfig';
 import { collection, addDoc, getDocs, updateDoc, doc } from 'firebase/firestore';
 
-const ScheduleRoom = () => {
+const ScheduleRoom = ({navigation}) => {
+
+
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTimeIn, setSelectedTimeIn] = useState('');
   const [selectedTimeEnd, setSelectedTimeEnd] = useState('');
