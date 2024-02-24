@@ -20,6 +20,10 @@ const LoginPage = ({ navigation }) => {
     const eventBoard = () => {
         navigation.replace('Board')
     }
+
+    const adminBoard = () => {
+        navigation.replace('BoardEvent')
+    }
     const RetrieveData = async () => {
         if (!userID || !password) {
             setModalMessage('Empty fields required!')
@@ -45,7 +49,7 @@ const LoginPage = ({ navigation }) => {
                             //addEvents()
                             eventBoard()
                         } else {
-                            eventBoard()
+                            adminBoard()
                         }
                     },2000)
                 }

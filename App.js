@@ -8,7 +8,9 @@ import Signup from './components/Singup';
 import ScheduleRoom from './components/ScheduleRoom';
 import CalendarEvent from './components/CalendarEvent';
 import EventBoard from './components/EventBoard';
-import { Dashboard } from './components/Dashboard';
+import  {Dashboard}  from './components/Dashboard';
+import DashboardEvent from './components/DashboardEvent';
+
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -21,6 +23,7 @@ export default function App() {
         <Stack.Screen name="Events" component={CalendarEvent} options={{headerShown: false}} />
         <Stack.Screen name="Board" component={EventBoard} options={{headerShown: false}} />
         <Stack.Screen name="Dashboards" component={Dashboard} options={{headerShown: false}} />
+        <Stack.Screen name="BoardEvent" component={DashboardEvent} options={{headerShown: false}} />
       </Stack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>

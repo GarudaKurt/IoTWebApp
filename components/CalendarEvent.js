@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Modal, TextInput, ScrollView } from 'react-native'; // Updated import
+import { StyleSheet, Text, View, Modal, TextInput, ScrollView } from 'react-native';
 import { Card, Title, Paragraph, Button } from 'react-native-paper';
 import { db } from './firebaseConfig';
 import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { Pressable } from 'react-native-web';
 
-const CalendarEvent = ({navigation}) => {
-  
+const CalendarEvent = ({ navigation }) => {
+
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -16,17 +16,13 @@ const CalendarEvent = ({navigation}) => {
   const [events, setEvents] = useState([]);
   const [userID, setUserID] = useState('');
   const [removeModalVisible, setRemoveModalVisible] = useState(false);
-  const [eventIndexToRemove, setEventIndexToRemove] = useState(null); 
+  const [eventIndexToRemove, setEventIndexToRemove] = useState(null);
   const [removeUserID, setRemoveUserID] = useState('');
-  const [boardEvent, setBoardEvents] = useState([]); // State variable for storing events
+  const [boardEvent, setBoardEvents] = useState([]);
 
   const dashBoard = () => {
     navigation.replace('Dashboards')
   }
-  
-  const handleAddButtonClick = () => {
-    setIsModalVisible(true);
-  };
 
   const handleModalClose = () => {
     setIsModalVisible(false);
@@ -37,10 +33,11 @@ const CalendarEvent = ({navigation}) => {
       title: eventTitle,
       description: eventDescription
     };
-    setEvents([...events, newEvent]);
+    setBoardEvents([...boardEvent, newEvent]); // Update boardEvent state
     setIsModalVisible(false);
     setEventTitle('');
     setEventDescription('');
+    setUserID(''); // Reset userID field after submission
   };
 
   const handleDeleteEvent = (index) => {
@@ -50,18 +47,19 @@ const CalendarEvent = ({navigation}) => {
 
   const handleRemoveModalClose = () => {
     setRemoveModalVisible(false);
-    setUserID('');
+    setRemoveUserID('');
   };
 
-  const handleRemoveEventSubmit = async () => {
+  const handleRemoveEventSubmit = async (index) => {
     try {
       if (removeUserID === userID) {
-        const updatedEvents = [...events];
-        updatedEvents.splice(eventIndexToRemove, 1);
-        setEvents(updatedEvents);
+        const updatedEvents = [...boardEvent];
+        updatedEvents.splice(index, 1);
+        setBoardEvents(updatedEvents);
   
-        // Check if the user is an instructor
         const userRef = doc(db, "users", userID);
+        if (!userID) return;
+  
         const userSnapshot = await getDocs(collection(db, "users"));
         let userExists = false;
   
@@ -69,7 +67,6 @@ const CalendarEvent = ({navigation}) => {
           const userData = doc.data();
           if (parseInt(userData.userID) === parseInt(userID) && userData.Type === "Instructor") {
             userExists = true;
-            // Delete Title and Description fields
             updateDoc(doc.ref, {
               Title: '',
               Description: '',
@@ -78,15 +75,13 @@ const CalendarEvent = ({navigation}) => {
         });
   
         if (!userExists) {
-          setModalMessage("Access denied only instructor could only add event");
-          setModalVisible(true);
-          console.log("user ID not exist");
+          setModalMessage("Access denied. Only instructors can remove events.");
           setModalVisible(true);
           return;
         }
         handleRemoveModalClose();
       } else {
-        setModalMessage("Access denied only instructor can remove.");
+        setModalMessage("Access denied. Only instructors can remove events.");
         setModalVisible(true);
       }
     } catch (error) {
@@ -98,6 +93,8 @@ const CalendarEvent = ({navigation}) => {
   const updateDb = async () => {
     try {
       const userRef = doc(db, "users", userID);
+      if(!userID)
+        return
       const userSnapshot = await getDocs(collection(db, "users"));
       let userExists = false;
 
@@ -110,13 +107,10 @@ const CalendarEvent = ({navigation}) => {
         const userData = doc.data();
         if (parseInt(userData.userID) === parseInt(userID) && userData.Type === "Instructor") {
           userExists = true;
-          console.log("User found:", userData);
           updateDoc(doc.ref, {
             Title: eventTitle,
             Description: eventDescription,
           });
-          console.log("Document updated for userID:", userID);
-          console.log("Results:", userData);
           handleModalSubmit();
         }
       });
@@ -131,37 +125,6 @@ const CalendarEvent = ({navigation}) => {
     }
   };
 
-  const modalRemove = () => {
-      <Modal
-      visible={removeModalVisible}
-      animationType="slide"
-      transparent={true}
-      onRequestClose={handleRemoveModalClose}
-      >
-      <View style={styles.modalContainer}>
-        <TextInput
-          style={styles.textInput}
-          placeholder="Enter your instructor id"
-          value={removeUserID}
-          onChangeText={setRemoveUserID}
-        />
-        <Button onPress={handleRemoveEventSubmit}>Submit</Button>
-        <Button onPress={handleRemoveModalClose}>Cancel</Button>
-      </View>
-    </Modal>
-  }
-  
-  const EventCard = ({ event }) => (
-    <View style={[styles.cardContainer, styles.card]}>
-      <Card>
-        <Card.Content>
-          <Title>{event.title}</Title>
-          <Paragraph>{event.description}</Paragraph>
-        </Card.Content>
-      </Card>
-    </View>
-  );
-
   const fetchData = async () => {
     try {
       const userSnapshot = await getDocs(collection(db, "users"));
@@ -169,7 +132,7 @@ const CalendarEvent = ({navigation}) => {
 
       userSnapshot.forEach((doc) => {
         const userData = doc.data();
-        if (userData.Title && userData.Description) { // Check if Title and Description exist
+        if (userData.Title && userData.Description) {
           fetchedEvents.push({
             title: userData.Title,
             description: userData.Description
@@ -177,42 +140,25 @@ const CalendarEvent = ({navigation}) => {
         }
       });
 
-      setBoardEvents(fetchedEvents); // Update state with events having Title and Description
+      setBoardEvents(fetchedEvents);
     } catch (error) {
       console.log("Error fetching events: ", error);
     }
   };
 
   useEffect(() => {
-  fetchData(); // Fetch events when component mounts
-  }, []); // Empty dependency array to run only once when component mounts
+    fetchData();
+  }, []);
 
   return (
-    
     <View style={styles.formContainer}>
       <Text style={styles.title}> Calendar Event</Text>
       <Pressable onPress={dashBoard}>
         <Text>→ Dashboard</Text>
       </Pressable>
 
-      <Button onPress={handleAddButtonClick}>Add Event</Button>
-
-      <ScrollView contentContainerStyle={styles.scrollContainer} horizontal={true}>
-        {events.map((event, index) => (
-          <Card key={index} style={styles.card}>
-            <Card.Content>
-              <Title>{event.title}</Title>
-              <Paragraph>{event.description}</Paragraph>
-            </Card.Content>
-            <Card.Actions>
-              <Button onPress={() => handleDeleteEvent(index)}>Remove</Button>
-            </Card.Actions>
-          </Card>
-        ))}
-      </ScrollView>
-
       <Modal
-        visible={isModalVisible} // Update to isModalVisible
+        visible={isModalVisible}
         animationType="slide"
         transparent={true}
         onRequestClose={handleModalClose}
@@ -220,24 +166,24 @@ const CalendarEvent = ({navigation}) => {
         <View style={styles.modalContainer}>
           <TextInput
             style={styles.textInput}
-            placeholder="Enter your instructor id"
-            value={userID}
-            onChangeText={setUserID}
-          />
-          <TextInput
-            style={styles.textInput}
-            placeholder="Enter your title"
+            placeholder="Event Title"
             value={eventTitle}
             onChangeText={setEventTitle}
           />
           <TextInput
             style={styles.textInput}
-            placeholder="Enter event description"
+            placeholder="Event Description"
             value={eventDescription}
             onChangeText={setEventDescription}
           />
-          <Button onPress={updateDb}>Submit</Button>
-          <Button onPress={handleModalClose}>Cancel</Button>
+          {/* Include userID input in the modal */}
+          <TextInput
+            style={styles.textInput}
+            placeholder="User ID"
+            value={userID}
+            onChangeText={setUserID}
+          />
+          <Button onPress={handleModalSubmit}>Submit</Button>
         </View>
       </Modal>
 
@@ -247,16 +193,7 @@ const CalendarEvent = ({navigation}) => {
         transparent={true}
         onRequestClose={handleRemoveModalClose}
       >
-        <View style={styles.modalContainer}>
-          <TextInput
-            style={styles.textInput}
-            placeholder="Enter your instructor id"
-            value={removeUserID}
-            onChangeText={setRemoveUserID}
-          />
-          <Button onPress={handleRemoveEventSubmit}>Submit</Button>
-          <Button onPress={handleRemoveModalClose}>Cancel</Button>
-        </View>
+        {/* Modal Content */}
       </Modal>
 
       {/* Modal for displaying messages */}
@@ -264,26 +201,14 @@ const CalendarEvent = ({navigation}) => {
         visible={modalVisible}
         animationType="slide"
         transparent={true}
-        onRequestClose={() => setModalVisible(false)} // Close modal when pressing the back button
+        onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.modalContainer}>
-          <Text>{modalMessage}</Text>
-          <Button onPress={() => setModalVisible(false)}>OK</Button>
-        </View>
+        {/* Modal Content */}
       </Modal>
-
-      <View>
-        <ScrollView contentContainerStyle={styles.scrollContainer} horizontal={true}>
-          {boardEvent.map((event, index) => (
-            <EventCard key={index} event={event} />
-          ))}
-        </ScrollView>
-      </View>
-
     </View>
-    
   );
 };
+
 
 const styles = StyleSheet.create({
   formContainer: {
