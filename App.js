@@ -10,6 +10,8 @@ import CalendarEvent from './components/CalendarEvent';
 import EventBoard from './components/EventBoard';
 import  {Dashboard}  from './components/Dashboard';
 import DashboardEvent from './components/DashboardEvent';
+import  BookResources  from './components/BookResources';
+import { AdminDashboard } from './components/AdminDashboard';
 
 const Stack = createStackNavigator();
 
@@ -24,6 +26,8 @@ export default function App() {
         <Stack.Screen name="Board" component={EventBoard} options={{headerShown: false}} />
         <Stack.Screen name="Dashboards" component={Dashboard} options={{headerShown: false}} />
         <Stack.Screen name="BoardEvent" component={DashboardEvent} options={{headerShown: false}} />
+        <Stack.Screen name="Resources" component={BookResources} options={{headerShown: false}} />
+        <Stack.Screen name="Admin" component={AdminDashboard} options={{headerShown: false}} />
       </Stack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>

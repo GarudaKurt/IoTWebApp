@@ -11,6 +11,9 @@ const EventCard = ({ event }) => (
         <Title>{event.title}</Title>
         <Paragraph>{event.description}</Paragraph>
       </Card.Content>
+      <Card.Actions>
+        <Paragraph>{event.userid}</Paragraph>
+      </Card.Actions>
     </Card>
   </View>
 );
@@ -29,11 +32,12 @@ const EventBoard = () => {
       const fetchedEvents = [];
 
       userSnapshot.forEach((doc) => {
-        const userData = doc.data();
-        if (userData.Title && userData.Description) { // Check if Title and Description exist
+        const eventData = doc.data();
+        if (eventData.Title && eventData.Description && eventData.userID) { // Check if Title and Description exist
           fetchedEvents.push({
-            title: userData.Title,
-            description: userData.Description
+            title: eventData.Title,
+            userid: eventData.userID,
+            description: eventData.Description
           });
         }
       });

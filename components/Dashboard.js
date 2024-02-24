@@ -9,6 +9,10 @@ export const Dashboard = ({navigation}) => {
     const addEvents = () => {
         navigation.replace('Events')
     }
+
+    const Resources = () => {
+        navigation.replace('Resources')
+    }
   return (
     <View style={style.formContainer}>
         <SafeAreaView style={style.container}>
@@ -18,6 +22,9 @@ export const Dashboard = ({navigation}) => {
             </Pressable>
             <Pressable style={style.buttonEvent} onPress={addEvents}>
                 <Text style={style.buttonText}>Schedule Event</Text>
+            </Pressable>
+            <Pressable style={style.buttonResource} onPress={Resources}>
+                <Text style={style.buttonText}>Book Resources</Text>
             </Pressable>
         </SafeAreaView>
     </View>
@@ -44,6 +51,14 @@ const style =  StyleSheet.create({
     buttonEvent: {
         width: '30%',
         backgroundColor: 'blue',
+        padding: 10,
+        alignItems: 'center',
+        marginBottom: 5,
+        borderRadius: 3
+    },
+    buttonResource: {
+        width: '30%',
+        backgroundColor: 'gray',
         padding: 10,
         alignItems: 'center',
         marginBottom: 5,

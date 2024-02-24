@@ -22,7 +22,7 @@ const LoginPage = ({ navigation }) => {
     }
 
     const adminBoard = () => {
-        navigation.replace('BoardEvent')
+        navigation.replace('Admin')
     }
     const RetrieveData = async () => {
         if (!userID || !password) {
