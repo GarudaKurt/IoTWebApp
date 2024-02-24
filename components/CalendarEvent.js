@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Modal, TextInput, ScrollView } from 'react-native'; // Updated import
 import { Card, Title, Paragraph, Button } from 'react-native-paper';
 import { db } from './firebaseConfig';
 import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
+import { Pressable } from 'react-native-web';
 
 const CalendarEvent = ({navigation}) => {
   
@@ -17,7 +18,12 @@ const CalendarEvent = ({navigation}) => {
   const [removeModalVisible, setRemoveModalVisible] = useState(false);
   const [eventIndexToRemove, setEventIndexToRemove] = useState(null); 
   const [removeUserID, setRemoveUserID] = useState('');
+  const [boardEvent, setBoardEvents] = useState([]); // State variable for storing events
 
+  const dashBoard = () => {
+    navigation.replace('Dashboards')
+  }
+  
   const handleAddButtonClick = () => {
     setIsModalVisible(true);
   };
@@ -47,17 +53,47 @@ const CalendarEvent = ({navigation}) => {
     setUserID('');
   };
 
-  const handleRemoveEventSubmit = () => {
-    if (removeUserID === userID) {
-      const updatedEvents = [...events];
-      updatedEvents.splice(eventIndexToRemove, 1);
-      setEvents(updatedEvents);
-      handleRemoveModalClose();
-    } else {
-      setModalMessage("Access dinied only instructor can remove.");
-      setModalVisible(true);
+  const handleRemoveEventSubmit = async () => {
+    try {
+      if (removeUserID === userID) {
+        const updatedEvents = [...events];
+        updatedEvents.splice(eventIndexToRemove, 1);
+        setEvents(updatedEvents);
+  
+        // Check if the user is an instructor
+        const userRef = doc(db, "users", userID);
+        const userSnapshot = await getDocs(collection(db, "users"));
+        let userExists = false;
+  
+        userSnapshot.forEach((doc) => {
+          const userData = doc.data();
+          if (parseInt(userData.userID) === parseInt(userID) && userData.Type === "Instructor") {
+            userExists = true;
+            // Delete Title and Description fields
+            updateDoc(doc.ref, {
+              Title: '',
+              Description: '',
+            });
+          }
+        });
+  
+        if (!userExists) {
+          setModalMessage("Access denied only instructor could only add event");
+          setModalVisible(true);
+          console.log("user ID not exist");
+          setModalVisible(true);
+          return;
+        }
+        handleRemoveModalClose();
+      } else {
+        setModalMessage("Access denied only instructor can remove.");
+        setModalVisible(true);
+      }
+    } catch (error) {
+      console.log("Error removing event: ", error);
     }
   };
+  
 
   const updateDb = async () => {
     try {
@@ -88,8 +124,6 @@ const CalendarEvent = ({navigation}) => {
       if (!userExists) {
         setModalMessage("Access denied only instructor could only add event");
         setModalVisible(true);
-        console.log("user ID not exist");
-        setModalVisible(true);
         return;
       }
     } catch (error) {
@@ -97,9 +131,69 @@ const CalendarEvent = ({navigation}) => {
     }
   };
 
+  const modalRemove = () => {
+      <Modal
+      visible={removeModalVisible}
+      animationType="slide"
+      transparent={true}
+      onRequestClose={handleRemoveModalClose}
+      >
+      <View style={styles.modalContainer}>
+        <TextInput
+          style={styles.textInput}
+          placeholder="Enter your instructor id"
+          value={removeUserID}
+          onChangeText={setRemoveUserID}
+        />
+        <Button onPress={handleRemoveEventSubmit}>Submit</Button>
+        <Button onPress={handleRemoveModalClose}>Cancel</Button>
+      </View>
+    </Modal>
+  }
+  
+  const EventCard = ({ event }) => (
+    <View style={[styles.cardContainer, styles.card]}>
+      <Card>
+        <Card.Content>
+          <Title>{event.title}</Title>
+          <Paragraph>{event.description}</Paragraph>
+        </Card.Content>
+      </Card>
+    </View>
+  );
+
+  const fetchData = async () => {
+    try {
+      const userSnapshot = await getDocs(collection(db, "users"));
+      const fetchedEvents = [];
+
+      userSnapshot.forEach((doc) => {
+        const userData = doc.data();
+        if (userData.Title && userData.Description) { // Check if Title and Description exist
+          fetchedEvents.push({
+            title: userData.Title,
+            description: userData.Description
+          });
+        }
+      });
+
+      setBoardEvents(fetchedEvents); // Update state with events having Title and Description
+    } catch (error) {
+      console.log("Error fetching events: ", error);
+    }
+  };
+
+  useEffect(() => {
+  fetchData(); // Fetch events when component mounts
+  }, []); // Empty dependency array to run only once when component mounts
+
   return (
+    
     <View style={styles.formContainer}>
       <Text style={styles.title}> Calendar Event</Text>
+      <Pressable onPress={dashBoard}>
+        <Text>→ Dashboard</Text>
+      </Pressable>
 
       <Button onPress={handleAddButtonClick}>Add Event</Button>
 
@@ -177,7 +271,17 @@ const CalendarEvent = ({navigation}) => {
           <Button onPress={() => setModalVisible(false)}>OK</Button>
         </View>
       </Modal>
+
+      <View>
+        <ScrollView contentContainerStyle={styles.scrollContainer} horizontal={true}>
+          {boardEvent.map((event, index) => (
+            <EventCard key={index} event={event} />
+          ))}
+        </ScrollView>
+      </View>
+
     </View>
+    
   );
 };
 

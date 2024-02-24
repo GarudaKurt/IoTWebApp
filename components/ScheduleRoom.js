@@ -15,6 +15,10 @@ const ScheduleRoom = ({navigation}) => {
   const [modalMessage, setModalMessage] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
 
+  const dashBoard = () => {
+    navigation.replace('Dashboards')
+  }
+
   /*This function will create new set of fields db date, start, end and subject code to the firestore */
   const updateDb = async () => {
     try {
@@ -74,6 +78,9 @@ const ScheduleRoom = ({navigation}) => {
     <View style={styles.formContainer}>
       <SafeAreaView style={styles.container}>
         <Text style={styles.title}>Book Schedule</Text>
+        <Pressable onPress={dashBoard}>
+          <Text>→ Dashboard</Text>
+        </Pressable>
         <View style={styles.line}></View> {/* Horizontal line */}
         <View style={styles.inputContainer}>
           <Text style={styles.txtDate}>Select date</Text>
