@@ -4,7 +4,7 @@ import {  StyleSheet, Text, View, SafeAreaView, Pressable, Button } from 'react-
 export const AdminDashboard = ({navigation}) => {
 
     const RoomBooking = () => {
-        navigation.replace('Events')
+        navigation.replace('RoomBook')
     }
 
     const adminBoardEvent = () => {
@@ -12,7 +12,7 @@ export const AdminDashboard = ({navigation}) => {
     }
 
     const ResourcesBooking = () => {
-        navigation.replace('Resources')
+        navigation.replace('Researves')
     }
   return (
     <View style={style.formContainer}>

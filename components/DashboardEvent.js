@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Modal, TextInput } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Modal, TextInput, Pressable } from 'react-native';
 import { Card, Title, Paragraph, Button } from 'react-native-paper';
 import { db } from './firebaseConfig';
 import { collection, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
@@ -9,6 +9,7 @@ const EventCard = ({ event, onDelete, showModal }) => (
     <Card>
       <Card.Content>
         <Title>{event.title}</Title>
+        <Paragraph>Prof ID: {event.userid}</Paragraph>
         <Paragraph>{event.description}</Paragraph>
       </Card.Content>
       <Card.Actions>
@@ -20,7 +21,7 @@ const EventCard = ({ event, onDelete, showModal }) => (
   </View>
 );
 
-const DashboardEvent = () => {
+const DashboardEvent = ({navigation}) => {
   const [events, setEvents] = useState([]);
   const [removeModalVisible, setRemoveModalVisible] = useState(false);
   const [removeUserID, setRemoveUserID] = useState('');
@@ -29,6 +30,9 @@ const DashboardEvent = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
 
+  const dashboard = () =>{
+    navigation.replace('Admin')
+  }
   useEffect(() => {
     updateDb();
     // Set userID when removeUserID changes
@@ -42,11 +46,12 @@ const DashboardEvent = () => {
 
       userSnapshot.forEach((doc) => {
         const userData = doc.data();
-        if (userData.Title && userData.Description) {
+        if (userData.Title && userData.Description && userData.userID) {
           fetchedEvents.push({
             id: doc.id,
             title: userData.Title,
-            description: userData.Description
+            description: userData.Description,
+            userid: userData.userID
           });
         }
       });
@@ -115,7 +120,9 @@ const DashboardEvent = () => {
   return (
     <View style={styles.formContainer}>
       <Text style={styles.title}> Admin Dashboard</Text>
-
+      <Pressable onPress={dashboard}>
+        <Text>→ Dashboard</Text>
+      </Pressable>
       <ScrollView contentContainerStyle={styles.scrollContainer} horizontal={true}>
         {events.map((event, index) => (
           <EventCard key={index} event={event} onDelete={handleDeleteEvent} showModal={showModal} />
