@@ -1,5 +1,6 @@
 import React from 'react'
 import {  StyleSheet, Text, View, SafeAreaView, Pressable, Button } from 'react-native-web'
+import Icon from 'react-native-vector-icons/FontAwesome'
 
 export const AdminDashboard = ({navigation}) => {
 
@@ -14,19 +15,30 @@ export const AdminDashboard = ({navigation}) => {
     const ResourcesBooking = () => {
         navigation.replace('Researves')
     }
+
+    const Attendance = () => {
+        navigation.replace('Attend')
+    }
   return (
     <View style={style.formContainer}>
         <SafeAreaView style={style.container}>
             <Text style={style.title}>Dashboard</Text>
             <Pressable style={style.buttonRoom} onPress={RoomBooking}>
+                <Icon name="calendar-plus-o" size={20} color="white" />
                 <Text style={style.buttonText}>Room Reservation</Text>
             </Pressable>
             <Pressable style={style.buttonEvent} onPress={adminBoardEvent}>
+                <Icon name="calendar" size={20} color="white" />
                 <Text style={style.buttonText}>Calendar Events</Text>
             </Pressable>
             <Pressable style={style.buttonResource} onPress={ResourcesBooking}>
+                <Icon name="cogs" size={20} color="white" />
                 <Text style={style.buttonText}>Resources Booking</Text>
             </Pressable>
+            <Pressable style={style.buttonAttend} onPress={Attendance}>
+                    <Icon name="id-card" size={20} color="white" />
+                    <Text style={style.buttonText}>Attendance Board</Text>
+                </Pressable>
         </SafeAreaView>
     </View>
 
@@ -68,6 +80,14 @@ const style =  StyleSheet.create({
     buttonRoom: {
         width: '30%',
         backgroundColor: 'green',
+        padding: 10,
+        alignItems: 'center',
+        marginBottom: 5,
+        borderRadius: 3
+    },
+    buttonAttend: {
+        width: '30%',
+        backgroundColor: '#ffeaa7',
         padding: 10,
         alignItems: 'center',
         marginBottom: 5,

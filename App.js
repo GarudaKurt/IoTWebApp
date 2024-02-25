@@ -14,6 +14,7 @@ import  BookResources  from './components/BookResources';
 import { AdminDashboard } from './components/AdminDashboard';
 import RoomReservation from './components/RoomReservation';
 import Researve from './components/Researve';
+import Attendance from './components/Attendance';
 
 const Stack = createStackNavigator();
 
@@ -32,6 +33,7 @@ export default function App() {
         <Stack.Screen name="Admin" component={AdminDashboard} options={{headerShown: false}} />
         <Stack.Screen name="RoomBook" component={RoomReservation} options={{headerShown: false}} />
         <Stack.Screen name="Researves" component={Researve} options={{headerShown: false}} />
+        <Stack.Screen name="Attend" component={Attendance} options={{headerShown: false}} />
       </Stack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>

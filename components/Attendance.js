@@ -8,16 +8,25 @@ const EventCard = ({ event }) => (
   <View style={[styles.cardContainer, styles.card]}>
     <Card>
       <Card.Content>
-        <Title>{event.title}</Title>
-        <Paragraph>{event.description}</Paragraph>
+        <Title>Attendance</Title>
+        <Paragraph>ID: {event.userid}</Paragraph>
+        <Paragraph>Subject: {event.subject}</Paragraph>
+        <Paragraph>Type: {event.usertype}</Paragraph>
+        <Paragraph>Date: {event.date}</Paragraph>
+        <Paragraph>Badge In: {event.badgeIn}</Paragraph>
+        <Paragraph>Badge Out: {event.badgeOut}</Paragraph>
       </Card.Content>
     </Card>
   </View>
 );
 
-const EventBoard = () => {
+const Attendance = ({navigation}) => {
   const [events, setEvents] = useState([]); // State variable for storing events
   
+  const dashboard = () => {
+    navigation.replace('Admin');
+  };
+
   useEffect(() => {
     updateDb(); // Fetch events when component mounts
   }, []); // Empty dependency array to run only once when component mounts
@@ -30,10 +39,14 @@ const EventBoard = () => {
 
       userSnapshot.forEach((doc) => {
         const eventData = doc.data();
-        if (eventData.Title && eventData.Description ) { // Check if Title and Description exist
+        if (eventData.userID && eventData.Code && eventData.Type && eventData.Date && eventData.Start && eventData.End) { // Check if Title and Description exist
           fetchedEvents.push({
-            title: eventData.Title,
-            description: eventData.Description
+            userid: eventData.userID,
+            subject: eventData.Code,
+            usertype: eventData.Type,
+            date: eventData.Date,
+            badgeIn: eventData.Start,
+            badgeOut: eventData.End,
           });
         }
       });
@@ -47,6 +60,9 @@ const EventBoard = () => {
   return (
     <View style={styles.formContainer}>
       <Text style={styles.title}> Dashboard</Text>
+      <Pressable onPress={dashboard}>
+        <Text>→ Dashboard</Text>
+      </Pressable>
       <ScrollView contentContainerStyle={styles.scrollContainer} horizontal={true}>
         {events.map((event, index) => (
           <EventCard key={index} event={event} />
@@ -55,7 +71,7 @@ const EventBoard = () => {
     </View>
   );
 };
-export default EventBoard;
+export default Attendance;
 
 const styles = StyleSheet.create({
   formContainer: {

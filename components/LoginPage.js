@@ -14,16 +14,18 @@ const LoginPage = ({ navigation }) => {
     };
 
     const dashBoard = () => {
+ 
         navigation.replace('Dashboards')
     }
 
-    const eventBoard = () => {
+    const studentBoard = () => {
         navigation.replace('Board')
     }
 
     const adminBoard = () => {
         navigation.replace('Admin')
     }
+    
     const RetrieveData = async () => {
         if (!userID || !password) {
             setModalMessage('Empty fields required!')
@@ -43,11 +45,9 @@ const LoginPage = ({ navigation }) => {
                     setModalVisible(true)
                     setTimeout(() => {
                         if(userData.Type === "Instructor") {
-                           // bookRoom()
                            dashBoard()
                         } else if(userData.Type === "Student") {
-                            //addEvents()
-                            eventBoard()
+                            studentBoard()
                         } else {
                             adminBoard()
                         }
