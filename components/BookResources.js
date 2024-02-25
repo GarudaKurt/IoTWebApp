@@ -12,8 +12,8 @@ const BookResources = ({navigation}) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
     
-    const dashboard =() => {
-        navigation.place('Dashboards')
+    const dashBoard = () => {
+      navigation.replace('Dashboards')
     }
   
 /*This function will create new set of fields db date, start, end and subject code to the firestore */
@@ -54,7 +54,7 @@ const BookResources = ({navigation}) => {
     <View style={styles.formContainer}>
       <SafeAreaView style={styles.container}>
         <Text style={styles.title}>Book Resources</Text>
-        <Pressable onPress={dashboard}>
+        <Pressable onPress={dashBoard}>
           <Text>→ Dashboard</Text>
         </Pressable>
         <TextInput

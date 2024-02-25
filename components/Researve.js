@@ -4,44 +4,54 @@ import { Card, Title, Paragraph, Button } from 'react-native-paper';
 import { db } from './firebaseConfig';
 import { collection, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 
-const EventCard = ({ event, onDelete, showModal }) => (
-  <View style={[styles.cardContainer, styles.card]}>
-    <Card>
-      <Card.Content>
-        <Title>{event.subjectcode}</Title>
-            <Paragraph>Prof ID:{event.userid}</Paragraph>
-            <Paragraph>Item: {event.tv}</Paragraph>
-            <Paragraph>Item: {event.hdmi}</Paragraph>
-            <Paragraph>Item: {event.projector}</Paragraph>
-            <Paragraph>Sched: {event.schedule}</Paragraph>
-      </Card.Content>
-      <Card.Actions>
-        <TouchableOpacity onPress={() => showModal(event)}>
-          <Text style={styles.buttonText}>Remove</Text>
-        </TouchableOpacity>
-      </Card.Actions>
-    </Card>
-  </View>
-);
+const EventCard = ({ event, onDelete, showModal }) => {
+  const [isApproved, setIsApproved] = useState(false);
+
+  const handleApprove = () => {
+    setIsApproved(true);
+  };
+
+  return (
+    <View style={[styles.cardContainer, styles.card, isApproved && styles.approvedCard]}>
+      <Card>
+        <Card.Content>
+          <Title>{event.subjectcode}</Title>
+          <Paragraph>Prof ID:{event.userid}</Paragraph>
+          <Paragraph>Item: {event.tv}</Paragraph>
+          <Paragraph>Item: {event.hdmi}</Paragraph>
+          <Paragraph>Item: {event.projector}</Paragraph>
+          <Paragraph>Sched: {event.schedule}</Paragraph>
+        </Card.Content>
+        <Card.Actions>
+          <TouchableOpacity onPress={handleApprove}>
+            <Text style={[styles.buttonText, styles.approveButton]}>Approve</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => showModal(event)}>
+            <Text style={styles.buttonText}>Remove</Text>
+          </TouchableOpacity>
+        </Card.Actions>
+      </Card>
+    </View>
+  );
+};
 
 const Researve = ({navigation}) => {
   const [events, setEvents] = useState([]);
   const [removeModalVisible, setRemoveModalVisible] = useState(false);
   const [removeUserID, setRemoveUserID] = useState('');
   const [eventToRemove, setEventToRemove] = useState(null);
-  const [userID, setUserID] = useState(''); // Initialize userID state variable
+  const [userID, setUserID] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
- 
+
   const dashboard = () => {
-    navigation.replace('Admin')
-  }
+    navigation.replace('Admin');
+  };
 
   useEffect(() => {
     updateDb();
-    // Set userID when removeUserID changes
     setUserID(removeUserID);
-  }, [removeUserID]); // Run the effect whenever removeUserID changes
+  }, [removeUserID]);
 
   const updateDb = async () => {
     try {
@@ -50,15 +60,16 @@ const Researve = ({navigation}) => {
 
       userSnapshot.forEach((doc) => {
         const userData = doc.data();
-        if (userData.Code && userData.TV && userData.HDMI && userData.Projector && userData.userID, userData.Schedule) { // Check if Title and Description exist
-            fetchedEvents.push({
-              subjectcode: userData.Code,
-              hdmi: userData.HDMI,
-              projector: userData.Projector,
-              tv: userData.TV,
-              userid: userData.userID,
-              schedule: userData.Schedule
-            });
+        if (userData.Code && userData.TV && userData.HDMI && userData.Projector && userData.userID, userData.Schedule) {
+          fetchedEvents.push({
+            id: doc.id, // Add id field
+            subjectcode: userData.Code,
+            hdmi: userData.HDMI,
+            projector: userData.Projector,
+            tv: userData.TV,
+            userid: userData.userID,
+            schedule: userData.Schedule
+          });
         }
       });
 
@@ -87,7 +98,6 @@ const Researve = ({navigation}) => {
         const updatedEvents = events.filter(event => event.id !== eventToRemove.id);
         setEvents(updatedEvents);
 
-        // Check if the user is an instructor
         const userSnapshot = await getDocs(collection(db, "users"));
         let userExists = false;
 
@@ -95,7 +105,6 @@ const Researve = ({navigation}) => {
           const userData = doc.data();
           if (parseInt(userData.userID) === parseInt(userID) && userData.Type === "Instructor") {
             userExists = true;
-            // Delete Title and Description fields
             updateDoc(doc.ref, {
               Title: '',
               Description: '',
@@ -153,7 +162,6 @@ const Researve = ({navigation}) => {
         </View>
       </Modal>
 
-      {/* Modal for displaying messages */}
       <Modal
         visible={modalVisible}
         animationType="slide"
@@ -168,6 +176,7 @@ const Researve = ({navigation}) => {
     </View>
   );
 };
+
 export default Researve;
 
 const styles = StyleSheet.create({
@@ -219,5 +228,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     padding: 10,
     marginTop: 20,
+  },
+  approveButton: {
+    color: 'green',
+  },
+  approvedCard: {
+    backgroundColor: 'lightgreen',
   },
 });
