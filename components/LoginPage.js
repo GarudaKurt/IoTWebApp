@@ -70,7 +70,7 @@ const LoginPage = ({ navigation }) => {
                 <Text style={styles.title}>Smart Lab App</Text>
 
                 <TextInput
-                    style={styles.input} placeholder='UserID'
+                    style={styles.input} placeholder='Enter your school ID#'
                     value={userID} onChangeText={(userID) => { setUserID(userID) }} />
 
                 <TextInput style={styles.input} placeholder='Password'

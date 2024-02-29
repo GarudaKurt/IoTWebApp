@@ -19,9 +19,18 @@ export const AdminDashboard = ({navigation}) => {
     const Attendance = () => {
         navigation.replace('Attend')
     }
+    const logOut = () => {
+        navigation.replace('Login')
+    }
   return (
     <View style={style.formContainer}>
         <SafeAreaView style={style.container}>
+            
+            <View style={style.logoutButtonContainer}>
+                <Pressable style={style.logoutButton} onPress={logOut}>
+                    <Icon name="sign-out" size={20} color="black" />
+                </Pressable>
+            </View>  
             <Text style={style.title}>Dashboard</Text>
             <Pressable style={style.buttonRoom} onPress={RoomBooking}>
                 <Icon name="calendar-plus-o" size={20} color="white" />
@@ -55,6 +64,15 @@ const style =  StyleSheet.create({
         width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    logoutButtonContainer: {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        padding: 0
+    },
+    logoutButton: {
+        padding: 5,
     },
     title: {
         fontSize: 24,

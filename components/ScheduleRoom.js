@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, SafeAreaView, Pressable, TextInput, Modal, Button } from 'react-native-web';
 import { db } from './firebaseConfig';
 import { collection, addDoc, getDocs, updateDoc, doc } from 'firebase/firestore';
+import Icon from 'react-native-vector-icons/FontAwesome'
 
 const ScheduleRoom = ({navigation}) => {
 
@@ -19,39 +20,66 @@ const ScheduleRoom = ({navigation}) => {
     navigation.replace('Dashboards')
   }
 
+  const logOut = () => {
+    navigation.replace('Login')
+  }
+
   /*This function will create new set of fields db date, start, end and subject code to the firestore */
   const updateDb = async () => {
     try {
-      const userRef = doc(db, "users", userID);
-      const userSnapshot = await getDocs(collection(db, "users"));
-      let userExists = false;
-
-      userSnapshot.forEach((doc) => {
-        const userData = doc.data();
-        if (parseInt(userData.userID) === parseInt(userID)) {
-          userExists = true;
-          console.log("User found:", userData);
-          updateDoc(doc.ref, {
-            Date: selectedDate,
-            Start: selectedTimeIn,
-            End: selectedTimeEnd,
-            Code: subjectCode
-            // Add other fields here if needed
-          });
-          console.log("Document updated for userID:", userID);
-          setModalMessage("Succesfully created!")
-          setModalVisible(true); // Show success modal
+      const scheduleSnapshot = await getDocs(collection(db, "users"));
+      let conflictExists = false;
+  
+      scheduleSnapshot.forEach((doc) => {
+        const scheduleData = doc.data();
+        if (
+          scheduleData.Date === selectedDate &&
+          scheduleData.Start === selectedTimeIn &&
+          scheduleData.End === selectedTimeEnd
+        ) {
+          conflictExists = true;
+          console.log("Conflict schedule found:", scheduleData);
         }
       });
-
-      if (!userExists) {
-        console.log("user ID not exist")
+  
+      if (conflictExists) {
+        setModalMessage("There is a conflict in the schedule. Please choose a different date and time slot.");
+        setModalVisible(true); // Show conflict modal
         return;
+      } else {
+        // Proceed to update database if no conflict
+        const userRef = doc(db, "users", userID);
+        const userSnapshot = await getDocs(collection(db, "users"));
+        let userExists = false;
+  
+        userSnapshot.forEach((doc) => {
+          const userData = doc.data();
+          if (parseInt(userData.userID) === parseInt(userID)) {
+            userExists = true;
+            console.log("User found:", userData);
+            updateDoc(doc.ref, {
+              Date: selectedDate,
+              Start: selectedTimeIn,
+              End: selectedTimeEnd,
+              Code: subjectCode
+              // Add other fields here if needed
+            });
+            console.log("Document updated for userID:", userID);
+            setModalMessage("Successfully created!");
+            setModalVisible(true); // Show success modal
+          }
+        });
+  
+        if (!userExists) {
+          console.log("user ID not exist")
+          return;
+        }
       }
     } catch (error) {
       console.log("Error updating document: ", error);
     }
   }
+  
   
   const handleDateChange = (event) => {
     setSelectedDate(event.target.value);
@@ -77,6 +105,11 @@ const ScheduleRoom = ({navigation}) => {
   return (
     <View style={styles.formContainer}>
       <SafeAreaView style={styles.container}>
+        <View style={styles.logoutButtonContainer}>
+            <Pressable style={styles.logoutButton} onPress={logOut}>
+                <Icon name="sign-out" size={20} color="black" />
+            </Pressable>
+	      </View>
         <Text style={styles.title}>Book Schedule</Text>
         <Pressable onPress={dashBoard}>
           <Text>→ Dashboard</Text>
@@ -155,6 +188,15 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  logoutButtonContainer: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    padding: 0
+  },
+  logoutButton: {
+    padding: 5,
   },
   title: {
     fontSize: 24,

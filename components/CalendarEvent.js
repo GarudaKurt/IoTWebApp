@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Modal, TextInput, ScrollView, Pressable } from 
 import { Card, Title, Paragraph, Button } from 'react-native-paper';
 import { db } from './firebaseConfig';
 import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
+import Icon from 'react-native-vector-icons/FontAwesome'
 
 const CalendarEvent = ({navigation}) => {
   
@@ -21,7 +22,9 @@ const CalendarEvent = ({navigation}) => {
   const dashBoard = () =>{
     navigation.replace('Dashboards')
   }
-  
+  const logOut = () => {
+    navigation.replace('Login')
+  }
   const handleAddButtonClick = () => {
     setIsModalVisible(true);
   };
@@ -103,6 +106,11 @@ const CalendarEvent = ({navigation}) => {
 
   return (
     <View style={styles.formContainer}>
+      <View style={styles.logoutButtonContainer}>
+          <Pressable style={styles.logoutButton} onPress={logOut}>
+              <Icon name="sign-out" size={20} color="black" />
+          </Pressable>
+      </View>  
       <Text style={styles.title}> Calendar Event</Text>
       <Pressable onPress={dashBoard}>
           <Text>→ Dashboard</Text>
@@ -193,6 +201,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f6fa',
     borderRadius: 10,
     padding: 20,
+  },
+  logoutButtonContainer: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    padding: 0
+  },
+  logoutButton: {
+    padding: 5,
   },
   title: {
     fontSize: 20,

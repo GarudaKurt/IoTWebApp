@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, SafeAreaView, TextInput, Pressable, Picker, Modal, Button } from 'react-native-web'
 import { db } from './firebaseConfig';
 import { collection, addDoc, getDocs, updateDoc, doc } from 'firebase/firestore';
+import Icon from 'react-native-vector-icons/FontAwesome'
 
 const BookResources = ({navigation}) => {
     const [bookTV, setBookTV] = useState('');
@@ -14,6 +15,10 @@ const BookResources = ({navigation}) => {
     
     const dashBoard = () => {
       navigation.replace('Dashboards')
+    }
+
+    const logOut = () => {
+      navigation.replace('Login')
     }
   
 /*This function will create new set of fields db date, start, end and subject code to the firestore */
@@ -53,6 +58,11 @@ const BookResources = ({navigation}) => {
   return (
     <View style={styles.formContainer}>
       <SafeAreaView style={styles.container}>
+        <View style={styles.logoutButtonContainer}>
+            <Pressable style={styles.logoutButton} onPress={logOut}>
+                <Icon name="sign-out" size={20} color="black" />
+            </Pressable>
+        </View>  
         <Text style={styles.title}>Book Resources</Text>
         <Pressable onPress={dashBoard}>
           <Text>→ Dashboard</Text>
@@ -140,6 +150,15 @@ const styles = StyleSheet.create({
       width: '100%',
       alignItems: 'center',
       justifyContent: 'center'
+    },
+    logoutButtonContainer: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      padding: 0
+    },
+    logoutButton: {
+      padding: 5,
     },
     title: {
       fontSize: 24,

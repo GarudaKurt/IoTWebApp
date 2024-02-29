@@ -16,9 +16,22 @@ export const Dashboard = ({ navigation}) => {
         navigation.replace('Resources')
     }
 
+    const Events = () => {
+        navigation.replace('ViewEvent')
+    }
+
+    const logOut = () => {
+        navigation.replace('Login')
+    }
+
     return (
         <View style={styles.formContainer}>
             <SafeAreaView style={styles.container}>
+                <View style={styles.logoutButtonContainer}>
+                    <Pressable style={styles.logoutButton} onPress={logOut}>
+                        <Icon name="sign-out" size={20} color="black" />
+                    </Pressable>
+                </View>
                 <Text style={styles.title}>Dashboard</Text>
                 <Pressable style={styles.buttonRoom} onPress={bookRoom}>
                     <Icon name="calendar-plus-o" size={20} color="white" />
@@ -31,6 +44,10 @@ export const Dashboard = ({ navigation}) => {
                 <Pressable style={styles.buttonResource} onPress={Resources}>
                     <Icon name="cogs" size={20} color="white" />
                     <Text style={styles.buttonText}>Book Resources</Text>
+                </Pressable>
+                <Pressable style={styles.buttonView} onPress={Events}>
+                    <Icon name="tasks" size={20} color="white" />
+                    <Text style={styles.buttonText}>Caledar Events</Text>
                 </Pressable>
             </SafeAreaView>
         </View>
@@ -47,6 +64,15 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    logoutButtonContainer: {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        padding: 0
+      },
+      logoutButton: {
+        padding: 5,
     },
     title: {
         fontSize: 24,
@@ -73,6 +99,14 @@ const styles = StyleSheet.create({
     buttonResource: {
         width: '30%',
         backgroundColor: 'gray',
+        padding: 10,
+        alignItems: 'center',
+        marginBottom: 5,
+        borderRadius: 3
+    },
+    buttonView: {
+        width: '30%',
+        backgroundColor: '#FEA47F',
         padding: 10,
         alignItems: 'center',
         marginBottom: 5,
