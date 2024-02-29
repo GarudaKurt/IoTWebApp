@@ -9,11 +9,9 @@ const EventCard = ({ event, onDelete, showModal }) => (
   <View style={[styles.cardContainer, styles.card]}>
     <Card>
       <Card.Content>
-        <Title>{event.sbujectcode}</Title>
-            <Paragraph>Prof ID:{event.userid}</Paragraph>
-            <Paragraph>Date: {event.date}</Paragraph>
-            <Paragraph>Start: {event.start}</Paragraph>
-            <Paragraph>End: {event.end}</Paragraph>
+        <Title>{event.title}</Title>
+        <Paragraph>Prof ID: {event.userid}</Paragraph>
+        <Paragraph>{event.description}</Paragraph>
       </Card.Content>
       <Card.Actions>
         <TouchableOpacity onPress={() => showModal(event)}>
@@ -24,7 +22,7 @@ const EventCard = ({ event, onDelete, showModal }) => (
   </View>
 );
 
-const RoomReservation = ({navigation}) => {
+const Events = ({navigation}) => {
   const [events, setEvents] = useState([]);
   const [removeModalVisible, setRemoveModalVisible] = useState(false);
   const [removeUserID, setRemoveUserID] = useState('');
@@ -33,12 +31,13 @@ const RoomReservation = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
 
-  const dashboard = () => {
-    navigation.replace('Admin')
+  const dashboard = () =>{
+    navigation.replace('Dashboards')
   }
-  const logOut = () => {
+
+ const logOut = () => {
     navigation.replace('Login')
-  }
+ }
 
   useEffect(() => {
     updateDb();
@@ -53,14 +52,13 @@ const RoomReservation = ({navigation}) => {
 
       userSnapshot.forEach((doc) => {
         const userData = doc.data();
-        if (userData.Code && userData.Date && userData.Start && userData.End && userData.userID) { // Check if Title and Description exist
-            fetchedEvents.push({
-              sbujectcode: userData.Code,
-              date: userData.Date,
-              start: userData.Start,
-              end: userData.End,
-              userid: userData.userID
-            });
+        if (userData.Title && userData.Description && userData.userID) {
+          fetchedEvents.push({
+            id: doc.id,
+            title: userData.Title,
+            description: userData.Description,
+            userid: userData.userID
+          });
         }
       });
 
@@ -127,11 +125,11 @@ const RoomReservation = ({navigation}) => {
 
   return (
     <View style={styles.formContainer}>
-      <View style={styles.logoutButtonContainer}>
-          <Pressable style={styles.logoutButton} onPress={logOut}>
-              <Icon name="sign-out" size={20} color="black" />
-          </Pressable>
-      </View>  
+        <View style={styles.logoutButtonContainer}>
+            <Pressable style={styles.logoutButton} onPress={logOut}>
+                <Icon name="sign-out" size={20} color="black" />
+            </Pressable>
+        </View>
       <Text style={styles.title}> Admin Dashboard</Text>
       <Pressable onPress={dashboard}>
         <Text>→ Dashboard</Text>
@@ -175,7 +173,7 @@ const RoomReservation = ({navigation}) => {
     </View>
   );
 };
-export default RoomReservation;
+export default Events;
 
 const styles = StyleSheet.create({
   formContainer: {

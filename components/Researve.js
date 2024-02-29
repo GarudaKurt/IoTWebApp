@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Modal, TextInput,
 import { Card, Title, Paragraph, Button } from 'react-native-paper';
 import { db } from './firebaseConfig';
 import { collection, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import Icon from 'react-native-vector-icons/FontAwesome'
 
 const EventCard = ({ event, onDelete, showModal }) => {
   const [isApproved, setIsApproved] = useState(false);
@@ -47,6 +48,10 @@ const Researve = ({navigation}) => {
   const dashboard = () => {
     navigation.replace('Admin');
   };
+  const logOut = () => {
+    navigation.replace('Login')
+  }
+
 
   useEffect(() => {
     updateDb();
@@ -134,6 +139,11 @@ const Researve = ({navigation}) => {
 
   return (
     <View style={styles.formContainer}>
+      <View style={styles.logoutButtonContainer}>
+          <Pressable style={styles.logoutButton} onPress={logOut}>
+              <Icon name="sign-out" size={20} color="black" />
+          </Pressable>
+      </View>
       <Text style={styles.title}> Admin Dashboard</Text>
       <Pressable onPress={dashboard}>
         <Text>→ Dashboard</Text>
@@ -184,6 +194,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f6fa',
     borderRadius: 10,
     padding: 20,
+  },
+  logoutButtonContainer: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    padding: 0
+  },
+  logoutButton: {
+    padding: 5,
   },
   title: {
     fontSize: 20,

@@ -51,7 +51,7 @@ const Signup = ({ navigation }) => {
 
         <TextInput
           style={styles.input}
-          placeholder='UserID'
+          placeholder='Enter your school ID#'
           value={userID}
           onChangeText={(userID) => { setuserID(userID) }}
         />

@@ -19,9 +19,21 @@ export const AdminDashboard = ({navigation}) => {
     const Attendance = () => {
         navigation.replace('Attend')
     }
+    const Arduino = () => {
+        navigation.replace('arduino')
+    }
+    const logOut = () => {
+        navigation.replace('Login')
+    }
   return (
     <View style={style.formContainer}>
         <SafeAreaView style={style.container}>
+            
+            <View style={style.logoutButtonContainer}>
+                <Pressable style={style.logoutButton} onPress={logOut}>
+                    <Icon name="sign-out" size={20} color="black" />
+                </Pressable>
+            </View>  
             <Text style={style.title}>Dashboard</Text>
             <Pressable style={style.buttonRoom} onPress={RoomBooking}>
                 <Icon name="calendar-plus-o" size={20} color="white" />
@@ -38,7 +50,11 @@ export const AdminDashboard = ({navigation}) => {
             <Pressable style={style.buttonAttend} onPress={Attendance}>
                     <Icon name="id-card" size={20} color="white" />
                     <Text style={style.buttonText}>Attendance Board</Text>
-                </Pressable>
+            </Pressable>
+            <Pressable style={style.buttonAttend} onPress={Arduino}>
+                    <Icon name="id-card" size={20} color="white" />
+                    <Text style={style.buttonText}>Arduino Board</Text>
+            </Pressable>
         </SafeAreaView>
     </View>
 
@@ -55,6 +71,15 @@ const style =  StyleSheet.create({
         width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    logoutButtonContainer: {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        padding: 0
+    },
+    logoutButton: {
+        padding: 5,
     },
     title: {
         fontSize: 24,

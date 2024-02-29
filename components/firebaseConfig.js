@@ -1,19 +1,24 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore } from 'firebase/firestore'
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getFirestore } from 'firebase/firestore'; // Import firebase/firestore
+import { getDatabase } from 'firebase/database'; // Import getDatabase from firebase/database
 
-// Your web app's Firebase configuration
+// Combined Firebase configuration for Firestore and Realtime Database
 const firebaseConfig = {
-  apiKey: "AIzaSyD6PTPz4K4T7XtJ0BPFrO7dkf_dUmyRP_o",
-  authDomain: "smartlabdb.firebaseapp.com",
-  projectId: "smartlabdb",
-  storageBucket: "smartlabdb.appspot.com",
-  messagingSenderId: "617515830869",
-  appId: "1:617515830869:web:97712d76adccf6bd338edc"
+  apiKey: "AIzaSyDvuCVMH8aXMMpSdhIKSyyHFbcYPS0VUIo", //realtime or firestore database will work 
+  authDomain: "smartlabdb.firebaseapp.com", //firestore database
+  databaseURL: "https://connection-9ad5a-default-rtdb.asia-southeast1.firebasedatabase.app", // Realtime Database URL
+  projectId: "smartlabdb", //firestore
+  storageBucket: "smartlabdb.appspot.com", //firestore
+  messagingSenderId: "617515830869", //firestore
+  appId: "1:617515830869:web:97712d76adccf6bd338edc", //firestore
+  measurementId: "G-L4XB80PR64" //realtime
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-//initialized firestore
-export const db = getFirestore(app )
+const firebaseApp = initializeApp(firebaseConfig);
+
+// Initialize Firestore
+export const db = getFirestore(firebaseApp);
+
+// Initialize Realtime Database
+export const firebaseDatabase = getDatabase(firebaseApp);

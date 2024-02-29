@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, ScrollView, Pressable } from 'react-native'; //
 import { Card, Title, Paragraph } from 'react-native-paper';
 import { db } from './firebaseConfig';
 import { collection, getDocs } from 'firebase/firestore';
+import Icon from 'react-native-vector-icons/FontAwesome'
 
 const EventCard = ({ event }) => (
   <View style={[styles.cardContainer, styles.card]}>
@@ -26,6 +27,9 @@ const Attendance = ({navigation}) => {
   const dashboard = () => {
     navigation.replace('Admin');
   };
+  const logOut = () => {
+    navigation.replace('Login')
+  }
 
   useEffect(() => {
     updateDb(); // Fetch events when component mounts
@@ -59,6 +63,11 @@ const Attendance = ({navigation}) => {
 
   return (
     <View style={styles.formContainer}>
+      <View style={styles.logoutButtonContainer}>
+          <Pressable style={styles.logoutButton} onPress={logOut}>
+              <Icon name="sign-out" size={20} color="black" />
+          </Pressable>
+      </View>  
       <Text style={styles.title}> Dashboard</Text>
       <Pressable onPress={dashboard}>
         <Text>→ Dashboard</Text>
@@ -78,6 +87,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f6fa',
     borderRadius: 10,
     padding: 20,
+  },
+  logoutButtonContainer: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    padding: 0
+  },
+  logoutButton: {
+    padding: 5,
   },
   title: {
     fontSize: 20,
