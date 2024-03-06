@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView, Modal } from 'react-native';
-import { firebaseDatabase } from './firebaseConfig';
-import { ref, onValue, off } from 'firebase/database';
-import { db } from './firebaseConfig';
-import { collection, addDoc, getDocs, updateDoc } from 'firebase/firestore';
+import { firebaseDatabase } from './firebaseConfig'; //import  for realtime db
+import { ref, onValue, off } from 'firebase/database'; //import for realtime db
+import { db } from './firebaseConfig'; //import this firebaseConfiguration
+import { collection, addDoc, getDocs, updateDoc } from 'firebase/firestore'; //import for firestore
 import { Card, Title, Paragraph } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/FontAwesome'
 
-export const Attendance = () => {
+export const Attendance = ({navigation}) => {
     const [data, setData] = useState(null);
 
     const [badgeIN, setBadgeIN] = useState('');
@@ -17,9 +18,18 @@ export const Attendance = () => {
 
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
+
+    const logOut = () => {
+      navigation.replace('Login')
+    }
+
+    const dashboard = () => {
+      navigation.replace('Admin');
+    };
+
+    //this function will fetch the data from the realtime db
     useEffect(() => {
-      const databaseRef = ref(firebaseDatabase, 'info');
-  
+      const databaseRef = ref(firebaseDatabase, 'info'); //this info is the reference of my realtime
       const fetchData = (snapshot) => {
           if (snapshot.exists()) {
               const retrieveData = snapshot.val();
@@ -58,7 +68,7 @@ export const Attendance = () => {
   
   
     console.log("My debug logs Infos ", userId, badgeIN, badgeOUT, date)
-
+    //handle to update the firestore if ever they new data from the realtime
     const updateDb = async () => {
         try {
             const userSnapshot = await getDocs(collection(db, 'users'));
@@ -91,7 +101,7 @@ export const Attendance = () => {
     useEffect(() => {
         retrieveDB(); // Fetch events when component mounts
     }, []); // Empty dependency array to run only once when component mounts
-
+    //this function will gonna display the data from the firestore into the card
     const retrieveDB = async () => {
         try {
             const userSnapshot = await getDocs(collection(db, 'users'));
@@ -134,6 +144,14 @@ export const Attendance = () => {
 
     return (
       <View style={styles.formContainer}>
+          <View style={styles.logoutButtonContainer}>
+                <Pressable style={styles.logoutButton} onPress={logOut}>
+                    <Icon name="sign-out" size={20} color="black" />
+                </Pressable>
+            </View>
+            <Pressable onPress={dashboard}>
+                <Text>→ Dashboard</Text>
+          </Pressable>
           <ScrollView contentContainerStyle={styles.scrollContainer} horizontal={true}>
               {events.length > 0 ? (
                   events.map((event, index) => (
@@ -175,6 +193,15 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         padding: 20,
     },
+    logoutButtonContainer: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      padding: 0
+  },
+  logoutButton: {
+      padding: 5,
+  },
     scrollContainer: {
         flexGrow: 1,
     },
