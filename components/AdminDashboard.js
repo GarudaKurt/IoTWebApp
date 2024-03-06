@@ -19,9 +19,7 @@ export const AdminDashboard = ({navigation}) => {
     const Attendance = () => {
         navigation.replace('Attend')
     }
-    const Arduino = () => {
-        navigation.replace('arduino')
-    }
+
     const logOut = () => {
         navigation.replace('Login')
     }
@@ -50,10 +48,6 @@ export const AdminDashboard = ({navigation}) => {
             <Pressable style={style.buttonAttend} onPress={Attendance}>
                     <Icon name="id-card" size={20} color="white" />
                     <Text style={style.buttonText}>Attendance Board</Text>
-            </Pressable>
-            <Pressable style={style.buttonAttend} onPress={Arduino}>
-                    <Icon name="id-card" size={20} color="white" />
-                    <Text style={style.buttonText}>Arduino Board</Text>
             </Pressable>
         </SafeAreaView>
     </View>

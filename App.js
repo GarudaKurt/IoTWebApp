@@ -15,9 +15,8 @@ import  BookResources  from './components/BookResources';
 import { AdminDashboard } from './components/AdminDashboard';
 import RoomReservation from './components/RoomReservation';
 import Researve from './components/Researve';
-import Attendance from './components/Attendance';
+import {Attendance} from './components/Attendance';
 import Events from './components/Events';
-import { Arduino } from './components/Arduino';
 
 const Stack = createStackNavigator();
 
@@ -38,7 +37,6 @@ export default function App() {
         <Stack.Screen name="Researves" component={Researve} options={{headerShown: false}} />
         <Stack.Screen name="Attend" component={Attendance} options={{headerShown: false}} />
         <Stack.Screen name="ViewEvent" component={Events} options={{headerShown: false}} />
-        <Stack.Screen name="arduino" component={Arduino} options={{headerShown: false}} />
       </Stack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>
