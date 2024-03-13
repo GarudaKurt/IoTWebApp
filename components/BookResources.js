@@ -36,7 +36,7 @@ const BookResources = ({navigation}) => {
           updateDoc(doc.ref, {
             TV: bookTV,
             HDMI: bookHDMI,
-            Projector: bookHDMI,
+            Projector: bookProjector,
             Schedule: schedule,
             // Add other fields here if needed
           });

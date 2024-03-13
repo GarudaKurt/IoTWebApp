@@ -3,13 +3,20 @@ import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Modal, TextInput,
 import { Card, Title, Paragraph, Button } from 'react-native-paper';
 import { db } from './firebaseConfig';
 import { collection, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
-import Icon from 'react-native-vector-icons/FontAwesome'
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const EventCard = ({ event, onDelete, showModal }) => {
-  const [isApproved, setIsApproved] = useState(false);
+  const [isApproved, setIsApproved] = useState(event.isApprove || false);
 
-  const handleApprove = () => {
+  const handleApprove = async () => {
     setIsApproved(true);
+    try {
+      await updateDoc(doc(db, 'users', event.id), {
+        approve: true
+      });
+    } catch (error) {
+      console.log('Error updating approval status: ', error);
+    }
   };
 
   return (
@@ -24,9 +31,11 @@ const EventCard = ({ event, onDelete, showModal }) => {
           <Paragraph>Sched: {event.schedule}</Paragraph>
         </Card.Content>
         <Card.Actions>
-          <TouchableOpacity onPress={handleApprove}>
-            <Text style={[styles.buttonText, styles.approveButton]}>Approve</Text>
-          </TouchableOpacity>
+          {!isApproved && (
+            <TouchableOpacity onPress={handleApprove}>
+              <Text style={[styles.buttonText, styles.approveButton]}>Approve</Text>
+            </TouchableOpacity>
+          )}
           <TouchableOpacity onPress={() => showModal(event)}>
             <Text style={styles.buttonText}>Remove</Text>
           </TouchableOpacity>
@@ -73,7 +82,8 @@ const Researve = ({navigation}) => {
             projector: userData.Projector,
             tv: userData.TV,
             userid: userData.userID,
-            schedule: userData.Schedule
+            schedule: userData.Schedule,
+            isApprove: userData.approve
           });
         }
       });
@@ -111,8 +121,11 @@ const Researve = ({navigation}) => {
           if (parseInt(userData.userID) === parseInt(userID) && userData.Type === "Instructor") {
             userExists = true;
             updateDoc(doc.ref, {
-              Title: '',
-              Description: '',
+              Code: '',
+              TV: '',
+              HDMI: '',
+              Projector: '',
+              Schedule: '',
             });
           }
         });
