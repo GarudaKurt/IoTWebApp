@@ -6,7 +6,7 @@ import { getDatabase } from 'firebase/database'; // Import getDatabase from fire
 const firebaseConfig = {
   apiKey: "AIzaSyDvuCVMH8aXMMpSdhIKSyyHFbcYPS0VUIo", //realtime or firestore database will work 
   authDomain: "smartlabdb.firebaseapp.com", //firestore database
-  databaseURL: "https://connection-9ad5a-default-rtdb.asia-southeast1.firebasedatabase.app", // Realtime Database URL
+  databaseURL: "https://esp8266tofirebase-33c76-default-rtdb.firebaseio.com/", // Realtime Database URL
   projectId: "smartlabdb", //firestore
   storageBucket: "smartlabdb.appspot.com", //firestore
   messagingSenderId: "617515830869", //firestore

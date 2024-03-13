@@ -111,8 +111,11 @@ const Researve = ({navigation}) => {
           if (parseInt(userData.userID) === parseInt(userID) && userData.Type === "Instructor") {
             userExists = true;
             updateDoc(doc.ref, {
-              Title: '',
-              Description: '',
+              Code: '',
+              TV: '',
+              HDMI: '',
+              Projector: '',
+              Schedule: '',
             });
           }
         });

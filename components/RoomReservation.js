@@ -9,8 +9,9 @@ const EventCard = ({ event, onDelete, showModal }) => (
   <View style={[styles.cardContainer, styles.card]}>
     <Card>
       <Card.Content>
-        <Title>{event.sbujectcode}</Title>
+        <Title>{event.subjectcode}</Title>
             <Paragraph>Prof ID:{event.userid}</Paragraph>
+            <Paragraph>Type: {event.usertype}</Paragraph>
             <Paragraph>Date: {event.date}</Paragraph>
             <Paragraph>Start: {event.start}</Paragraph>
             <Paragraph>End: {event.end}</Paragraph>
@@ -53,9 +54,11 @@ const RoomReservation = ({navigation}) => {
 
       userSnapshot.forEach((doc) => {
         const userData = doc.data();
-        if (userData.Code && userData.Date && userData.Start && userData.End && userData.userID) { // Check if Title and Description exist
+        if (userData.Code && userData.Date && userData.Start && userData.End && userData.userID && userData.Type) { // Check if Title and Description exist
             fetchedEvents.push({
-              sbujectcode: userData.Code,
+              id: doc.id,
+              usertype: userData.Type,
+              subjectcode: userData.Code,
               date: userData.Date,
               start: userData.Start,
               end: userData.End,
@@ -99,8 +102,10 @@ const RoomReservation = ({navigation}) => {
             userExists = true;
             // Delete Title and Description fields
             updateDoc(doc.ref, {
-              Title: '',
-              Description: '',
+              Code: '',
+              Date: '',
+              Start: '',
+              End: '',
             });
           }
         });
