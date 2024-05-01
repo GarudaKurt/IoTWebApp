@@ -24,6 +24,10 @@ export const Dashboard = ({ navigation}) => {
         navigation.replace('Login')
     }
 
+    const AvailableRooms = () => {
+        navigation.replace('ViewRoom')
+    }
+
     return (
         <View style={styles.formContainer}>
             <SafeAreaView style={styles.container}>
@@ -48,6 +52,10 @@ export const Dashboard = ({ navigation}) => {
                 <Pressable style={styles.buttonView} onPress={Events}>
                     <Icon name="tasks" size={20} color="white" />
                     <Text style={styles.buttonText}>Caledar Events</Text>
+                </Pressable>
+                <Pressable style={styles.availableRoom} onPress={AvailableRooms}>
+                    <Icon name="book" size={20} color="white" />
+                    <Text style={styles.buttonText}>Available Room</Text>
                 </Pressable>
             </SafeAreaView>
         </View>
@@ -91,6 +99,14 @@ const styles = StyleSheet.create({
     buttonEvent: {
         width: '30%',
         backgroundColor: 'blue',
+        padding: 10,
+        alignItems: 'center',
+        marginBottom: 5,
+        borderRadius: 3
+    },
+    availableRoom: {
+        width: '30%',
+        backgroundColor: '#c4a39a',
         padding: 10,
         alignItems: 'center',
         marginBottom: 5,
